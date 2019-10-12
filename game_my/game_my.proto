@@ -1,0 +1,1365 @@
+﻿syntax = "proto2";
+
+package game.my;
+
+message PlayerBetInfo
+{
+	optional int32 total_round = 1;
+	repeated int32 each_bet = 2;
+	repeated int32 last_bet = 3;
+	repeated int32 last_bet_look = 4;
+}
+
+message GamePublicData
+{
+	
+	optional int32 play_mode = 1; //  玩法
+	optional int64 boot_value = 2; //底注
+	optional int32 banker_chair = 3; //庄家椅子号，椅子号从1开始哦
+	optional int32 current_chair = 4; //活动椅子号
+	optional int32 bet_wait_time = 5; // 操作时间
+	optional int32 table_status = 6; 
+	optional uint32 ope_status = 7; 
+	optional int32 total_deposit = 8;  // 使用 total_deposit_64 替代
+	optional int32 current_double = 9; 
+	optional int32 max_blind = 10; 
+	optional int64 pot_limit = 11; 
+	optional int64 chall_limit = 12; 
+	optional int32 ask_compare_chair = 13; 
+	optional int32 ope_rest_time = 14;
+	repeated int32 joker_cards = 15;
+	optional PlayerBetInfo bet_info = 16;
+	optional int32 dealer_id = 17;
+	optional int32 table_type = 18;
+	optional int32 protect_lose = 19;
+	optional int32 skin_id = 20;
+	optional int32 king_deposit = 21; // 使用 king_deposit_64 替代
+	optional int32 table_king_chair = 22;
+	optional int32 dealer_belong_userid = 23;
+	optional int32 new_dealer_id = 24;
+	optional int64 total_deposit_64 = 25; 
+	optional int32 king_deposit_64 = 26;
+}
+
+message GamePlayerData
+{
+	optional int32 user_id = 1;
+	optional int32 chair_no = 2;
+	repeated int32 hand_cards = 3;
+	optional int32 card_type = 4;
+	optional int32 card_weight = 5;
+	optional int64 deposit_used = 6;
+	optional int64 deposit_total = 7;
+	optional bool in_game = 8;
+
+	optional int64 cur_deposit = 9;
+	optional int64 cur_won = 10;
+	optional int64 cur_total = 11;
+
+	optional int32 player_status = 12;
+	optional int64 player_deposit = 13;
+	optional int32 look_card = 14;
+	optional int32 robot_type = 15;
+	optional int32 experience = 16;
+	optional int32 level = 17;
+
+	optional int64 cur_deposit_king = 18;
+	optional int32 last_bet = 19;
+}
+
+//进入游戏时的通知的自定义扩展数据
+message EnterNormalGameRespExtendInfo
+{
+	optional GamePublicData public_data = 1;
+	repeated GamePlayerData player_data = 2;
+}
+
+//进入游戏时的通知的自定义扩展数据
+message GameStartExtendInfo
+{
+	optional GamePublicData public_data = 1;
+	repeated GamePlayerData player_data = 2;
+}
+
+message LookCardReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 chairno = 3;
+}
+
+message LookCardResp
+{
+	optional int32 code = 1;
+	optional int32 chairno = 2;
+	repeated int32 cards = 3;
+	optional int32 cardsweight = 4;
+	optional uint32 nextcouldope = 5;
+}
+
+message LookCardNotify
+{
+	optional int32 code = 1;
+	optional int32 chairno = 2;
+	repeated int32 cards = 3;
+	optional int32 cardsweight = 4;
+	optional uint32 nextcouldope = 5;
+}
+
+message BetReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 chairno = 3;
+	optional int32 bet = 4;
+}
+
+message BetResp
+{
+	optional int32 code = 1;
+	optional int32 chairno = 2;
+	optional int32 bet = 3;
+	optional int32 next_could_ope = 4;
+	optional int32 next_chair = 5;
+}
+
+message BetNotify
+{
+	optional int32 chairno = 1;
+	optional int32 next_could_ope = 2;
+	optional int32 next_chair = 3;
+	optional int32 bet = 4;
+}
+
+message RiseReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 chairno = 3;
+	optional int32 bet = 4;
+}
+
+message RiseResp
+{
+	optional int32 code = 1;
+	optional int32 chairno = 2;
+	optional int32 bet = 3;
+	optional int32 next_could_ope = 4;
+	optional uint32 next_chair = 5;
+}
+
+message RiseNotify
+{
+	optional int32 chairno = 1;
+	optional int32 bet = 2;
+	optional uint32 next_could_ope = 3;
+	optional int32 next_chair = 4;
+}
+
+message CompareReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 chair = 3;
+	optional int32 goal_chair = 4;
+}
+
+message CompareResp
+{
+	optional int32 code = 1;
+	optional int32 chairno = 2;
+	optional int32 goal_chairno = 3;
+	optional int32 bet = 4;
+	optional bool is_next_chair = 5;
+	optional int32 next_chair = 6;
+	optional uint32 next_could_ope = 7;
+}
+
+message AnserCompareReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 chair = 3;
+	optional int32 ask_chair = 4;
+	optional bool allow_compare = 5;
+	optional int32 tableno = 6;
+}
+
+message AnserCompareResp
+{
+	optional int32 code = 1;
+	optional int32 chair = 2;
+	optional int32 ask_chair = 3;
+	optional int32 lost_chair = 4;
+	optional int32 win_chair = 5;
+	optional int32 bet = 6;
+	optional bool is_next_chair = 7;
+	optional int32 next_chair = 8;
+	repeated int32 ask_chair_cards = 9;
+	repeated int32 anser_chair_cards = 10;
+	repeated int32 joker_cards = 11;
+	repeated int32 ask_replace_cards = 12;
+	repeated int32 anser_replace_cards = 13;
+	optional int32 win_type = 14;
+	optional uint32 next_could_ope = 15;
+	optional bool allow_compare = 16;
+	repeated int32 card_strength = 17;
+}
+
+//游戏结算时自定义扩展数据
+message PlayerResultExtendInfo
+{
+	repeated int32 hand_cards = 1;
+}
+
+//游戏结算时自定义扩展数据
+message GameResultExtendInfo
+{
+	optional int32 win_chair = 1;
+	optional int32 win_type = 2;
+	optional int32 not_finalshow = 3;
+	repeated PlayerResultExtendInfo player_info = 4;
+	repeated int32 experience_add = 5;
+	repeated int32 user_id = 6;
+	optional bool is_reach_king = 7;
+}
+message FinalShowReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 chair = 3;
+	optional bool force = 4;
+}
+
+message FinalShowResp
+{
+	optional int32 code = 1;
+	optional int32 chair = 2;
+	optional int32 goal_chair = 3;
+	optional int32 win_chair = 4;
+	repeated ChairCards chair_cards = 5;
+	repeated ReplaceCards replace_cards = 6;
+	optional int32 bet = 7;
+	optional bool force = 8;
+	repeated int32 card_type = 9;
+	optional bool is_pot_limit = 10;
+}
+
+message ChairCards
+{
+	repeated int32 cards = 1;
+}
+
+message ReplaceCards
+{
+	repeated int32 cards = 1;
+}
+
+message GiveUpReq
+{	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 chair = 3;
+}
+
+message GiveUpResp
+{
+	optional int32 code = 1;
+	optional int32 chair = 2;
+	optional bool is_next = 3;
+	optional int32 next_chair = 4;
+	optional uint32 next_could_ope = 5;
+	repeated int32 joker_cards = 6;
+	repeated int32 cards_weight = 7;
+}
+
+message TimeOutReq
+{	
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 chair = 3;
+	optional int32 table_status = 4;
+	optional int32 ope_status = 5;
+	optional string guid = 6;
+	optional int32 tableno = 7;
+}
+
+message TimeOutResp
+{	
+	optional int32 code = 1;
+	optional int32 roomid = 2;
+	optional int32 userid = 3;
+	optional int32 chair = 4;
+}
+
+message DelayOpeReq
+{	
+	optional int32 ope_id = 1;
+	optional int32 roomid = 2;
+	optional int32 tableno = 3;
+	optional int32 userid = 4;
+	optional int32 chair = 5;
+	optional int32 table_status = 6;
+	optional int32 ope_status = 7;
+}
+
+message DelayOpeResp
+{	
+	optional int32 code = 1;
+	optional int32 roomid = 2;
+	optional int32 userid = 3;
+	optional int32 chair = 4;
+}
+
+message AITimeOutReq
+{	
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 chair = 3;
+}
+
+message AITimeOutResp
+{	
+	optional int32 code = 1;
+	optional int32 roomid = 2;
+	optional int32 userid = 3;
+	optional int32 chair = 4;
+}
+
+enum TableType {
+	TYPE_INVALID = -1;
+	TYPE_NORMAL = 0;
+	TYPE_READY = 1;
+	TYPE_NEWBIE = 2;
+	TYPE_NEWBIE_READY = 3;
+	TYPE_TOTAL =4;
+};
+message ModifyTableType
+{
+	optional int32 roomid = 1;
+	optional int32 tableno = 2;
+	optional TableType type  = 3;
+}
+
+message TableCustomData
+{
+	optional TableType type = 1;
+}
+
+message TipsReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 product_id = 3;
+	optional int32 count = 4;
+	optional bool is_not_response = 5;
+}
+
+message TipsResp
+{
+	optional int32 code = 1;
+	optional int32 chair = 2;
+	optional int32 product_id = 3;
+	optional int32 count = 4;
+	optional int64 cost_deposit = 5;
+	optional int64 current_deposit = 6;
+}
+
+message SendGiftReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 gift_id = 3;
+	optional int32 product_id = 4;
+	optional int32 count = 5;
+	optional int32 goal_chair = 6;
+	optional bool is_not_response = 7;
+}
+
+message SendGiftResp
+{
+	optional int32 code = 1;
+	optional int32 chair = 2;
+	optional int32 goal_chair = 3;
+	optional int32 gift_id = 4;
+	optional int32 product_id = 5;
+	optional int32 count = 6;
+	optional int64 cost_deposit = 7;
+	optional int64 current_deposit = 8;
+}
+
+message ChangeDealerReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 dealer_id = 3;
+	optional int32 product_id = 4;
+	optional int32 count = 5;
+	optional bool is_not_response = 6;
+}
+
+message ChangeDealerResp
+{
+	optional int32 code = 1;
+	optional int32 chair = 2;
+	optional int32 userid = 3;
+	optional int32 dealer_id = 4;
+	optional int32 product_id = 5;
+	optional int32 count = 6;
+	optional int64 cost_deposit = 7;
+	optional int64 current_deposit = 8;
+}
+
+message BankruptNotify
+{
+	optional int32 userid = 1;
+	optional int32 min_deposit = 2;
+	optional bool less_than_room = 3;
+	optional bool show_demotion = 4;
+	optional int64 min_deposit_64 = 5;
+}
+
+message RemindSwitchTableNotify
+{
+	optional int32 userid = 1;
+	optional string msg = 2;
+}
+
+message TimeOutNotify
+{
+	optional int32 chair = 1;
+	optional int32 user_id = 2;
+}
+// ============== chunksvr ===================
+
+message TaskParamChangeAll
+{
+	optional int32 userid = 1;
+	repeated int32 task_types = 2;
+	repeated int32 task_values = 3;
+}
+
+message TaskParamInfo
+{
+	optional int32 code = 1;
+	optional int32 userid = 2;
+	optional int32 date = 3;
+	repeated int32 params = 4;
+}
+
+message TaskQuery
+{
+	optional int32 userid = 1;
+	optional int32 task_type = 2;
+	optional int32 date = 3;
+	optional int32 version = 4;
+}
+
+message TaskParamInfoQuery
+{
+	optional int32 code = 1;
+	optional int32 userid = 2;
+	optional int32 date = 3;
+	repeated int32 params = 4;
+	repeated int32 param_total = 5;
+	repeated int32 award = 6;
+	repeated int32 prize = 7;
+}
+
+message TaskDataChange
+{
+	optional int32 userid = 1;
+	optional int32 task_type = 2;
+	optional int32 task_value = 3;
+	optional int32 reward = 4;
+	optional int32 total = 5;
+	optional int32 version = 6;
+	optional int32 level = 7;
+}
+
+message TaskDataInfo
+{
+	optional int32 code = 1;
+	optional int32 userid = 2;
+	optional int32 date = 3;
+	optional int32 param_data = 4;
+	optional int32 reward = 5;
+	optional int32 taskid = 6;
+}
+
+message LevelGetRewardReq
+{
+	optional int32 userid = 1;
+	optional int32 level = 2;
+	optional int32 version = 3;
+}
+
+message LevelGetRewardResp
+{
+	optional int32 code = 1;
+	optional int32 userid = 2;
+	optional int32 reward_type = 3;
+	optional int32 reward_value = 4;
+	optional bool cross_level_part = 5;
+}
+
+message LevelGetRewardNewResp
+{
+	optional int32 code = 1;
+	optional int32 userid = 2;
+	repeated int32 reward_type = 3;
+	repeated int32 reward_value = 4;
+	optional bool cross_level_part = 5;
+	optional int32 reward_dealer_id = 6;
+}
+
+message GetLevelReq
+{
+	optional int32 userid = 1;
+}
+
+message GetLevelResp
+{
+	optional int32 code = 1;
+	optional int32 userid = 2;
+	optional int32 level = 3;
+}
+
+//
+message PlayerInfo
+{
+	optional int32 userid = 1;
+	optional int32 queryid = 2;
+	optional int32 type = 3;
+	optional int32 value = 4;
+	optional int32 play_mode = 5;
+	optional int32 card_weight = 6;
+	repeated int32 cards = 7;
+	optional bool xr_reward = 8;
+	optional string xr_mobile_phone = 9;
+}
+
+message QueryPlayerInfoReq
+{
+	optional PlayerInfo player_info = 1;
+}
+
+message QueryPlayerInfoResp
+{
+	optional int32 code = 1;
+	optional PlayerInfo player_info = 2;
+	optional FavoriteDealerInfo favorite_dealer = 3;
+	optional int32 star = 4;
+}
+
+message OpenStrengthReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional bool is_open = 3;
+}
+
+// 进私有房
+message EnterPrivateGameReq
+{
+	optional int32 userid			= 1;
+	optional int32 gameid			= 2;
+	optional int32 roomid			= 3;
+	optional int32 flag 			= 4;	// 定义见EnterGameFlag
+	optional int32 target 			= 5;	// 根据flag不同，target有不同的含义（userid\tableno等）
+	optional string hardid			= 6;	// 硬件信息
+	optional string hall_version	= 7;	// 合集大厅版本
+	optional string game_version	= 8;	// 游戏客户端版本
+	optional int64 boot_value       = 9;    // 底注
+	optional int32 bet_wait_time    = 10;   // 操作时间
+    optional bool is_table_owner	= 11;   // 是否房主
+}
+
+message EnterPrivateGameResp
+{
+	optional int32 code				= 1;
+	optional int32 flag		 		= 2;	// 定义见EnterGameRespFlag
+	optional BytesData hand			= 3;	// 断线续玩的时候返回自己的手牌
+	optional TablePlayersInfo table_players = 4;
+	optional int32 custom_flag		= 5;	// 标记custom_data的类型
+	optional BytesData custom_data	= 6;	// 游戏方自定义数据
+	optional int32 gameid			= 7;	// 当用户在其他游戏中的时候，值为用户所在游戏的gameid
+	optional int64 deposit			= 8;	// 用户自身银子数（当用户在大厅后台Enter成功，在游戏中校验失败的时候返回用户最新银子数）
+}
+
+message RuleConfigReq
+{
+	optional int32 boot_value = 1;
+	optional int32 chall_limit = 2;
+	optional int32 pot_limit = 3;
+	optional int32 play_mode = 4;
+	optional int32 max_blind = 5;
+	optional int32 dealer_id = 6;
+	optional int32 new_dealer_id = 7;
+}
+
+message BackGroundReq
+{
+	optional int32 roomid = 1;
+	optional int32 userid = 2;
+	optional int32 chairno = 3;
+	optional int32 tableno = 4;
+}
+
+message BackGroundResp
+{
+	optional int32 code = 1;
+}
+
+message RoomUpgradeNotify
+{
+	optional int32 userid = 1;
+	optional bool need_upgrade = 2;
+}
+
+message XRRewardReq
+{
+	optional int32 userid = 1;
+	optional string mobile_phone = 2;
+	optional int32 is_reward = 3;
+	optional int32 userid_has_reward = 4;
+	optional int32 mobilephone_has_reward = 5;
+	optional int32 code = 6;
+}
+
+message XRRewardResp
+{
+	optional int32 code = 1;
+}
+
+message LevelUpReq
+{
+	optional int32 userid = 1;
+	optional int32 level_old = 2;
+	optional int32 level_cur = 3;
+}
+// 私人房房主请求开局
+message PrivateRoomGameStartReq
+{
+    optional int32 room_id              = 1;    // 房间id
+    optional int32 table_owner_user_id  = 2;    // 私人房房主id
+    optional int32 chair_no             = 3;    // 椅子号
+}
+
+message PrivateRoomGameStartResp
+{
+    optional int32 code = 1;
+}
+
+// 通知所有玩家私人房房主user_id
+message PrivateRoomTableOwnerNotify
+{
+    optional int32 table_owner_user_id  = 2;    // 私人房房主id
+}
+
+// 客户端请求抽奖配置参数
+message QueryLotteryConfigParams
+{
+    optional int32 user_id = 1;    // 用户id
+}
+
+// 客户请求抽奖参数
+message QueryLotteryParams
+{
+    optional int32 user_id      = 1;    // 用户id
+    optional int32 lottery_type = 2;    // 抽奖类型(免费/付费)
+}
+
+// 奖品信息
+message PrizeInfo
+{
+    optional int32 prize_id     = 1;    // 奖品id
+    optional int32 prize_type   = 2;    // 奖品类型
+    optional int32 prize_value  = 3;    // 奖品面值
+    optional float prize_pr     = 4;    // 奖品抽中概率
+    optional bool is_rare_prize = 5;   // 是否稀有奖品
+    optional SkinInfo skin_info = 6;    // 奖品若为皮肤,需要带入皮肤信息
+}
+
+// 皮肤信息
+message SkinInfo
+{
+    optional int32 dealer_id        = 1;    // 所属荷官id
+    optional int32 skin_id          = 2;    // 皮肤id
+    optional int32 skin_own_count   = 3;    // 玩家拥有数量
+    optional int32 prize_id         = 4;    // 对应奖品id
+}
+
+// 抽奖配置
+message LotteryConfig
+{
+    optional int32 cool_down_time               = 1;    // 剩余冷却时间
+    optional int32 continuous_lottery_count     = 2;    // 连续抽奖天数
+    optional int32 diamond_lottery_prize        = 3;    // 付费抽奖单价
+    repeated float bouns_proportion             = 4;    // 加成倍数配置
+    repeated PrizeInfo free_reward_info         = 5;    // 所有免费奖品信息
+    repeated PrizeInfo diamond_reward_info = 6;    // 所有付费奖品信息
+    repeated SkinInfo skin_info                 = 7;    // 所有皮肤信息
+}
+
+// 服务端返回抽奖配置结果
+message QueryConfigRet
+{
+    optional int32 code             = 1;    // 结果code
+    optional int32 user_id          = 2;    // 用户id
+    optional LotteryConfig config   = 3;    // 抽奖配置
+}
+
+// 服务端返回抽奖结果
+message LotteryResult
+{
+    optional int32 code             = 1;    // 抽奖结果code
+    optional int32 user_id          = 2;    // 用户id
+    optional int32 cool_down_time   = 3;    // 最新冷却时间
+    optional int32 lottery_type     = 4;    // 抽奖类型
+    optional float proportion       = 5;    // 加成比例
+    optional PrizeInfo prize_info   = 6;    // 抽中奖品信息
+}
+////////////////////////////////////DEALER////////////////////////////////////
+
+//客户端请求查询荷官信息
+message QueryDealerData
+{
+	optional int32 userid = 1;
+}
+
+//获取最喜爱荷官
+message FavoriteDealerDataReq
+{
+	optional int32 userid = 1;
+}
+
+message FavoriteDealerDataResp
+{
+	optional int32 code = 1;
+	optional FavoriteDealerInfo favorite_info = 2;
+}
+
+//修改最喜爱荷官
+message ChangeFavoriteDealerReq
+{
+	optional int32 userid = 1;
+	optional int32 favorite_dealer_id = 2;
+	optional int32 favorite_skin_id = 3;
+}
+
+message ChangeFavoriteDealerResp
+{
+	optional int32 code = 1;
+}
+
+
+message QueryDealerDataResp
+{
+	optional int32 code = 1;
+	optional int32 userid = 2;
+	optional FavoriteDealerInfo favorite_info = 3;
+	repeated DealerDataInfo dealer_data = 4;
+}
+
+message FavoriteDealerInfo
+{
+	optional int32 dealer_id = 1;
+	optional int32 skin_id = 2;
+}
+
+message DealerDataInfo
+{
+	optional int32 dealer_id = 1;
+	optional int32 save_skin_id = 2;
+	repeated SkinDataInfo skin_data = 3;
+	repeated DealerTaskInfo task_info = 4;
+}
+
+message SkinDataInfo
+{
+	optional int32 skin_id = 1;
+}
+
+message  DealerTaskInfo
+{
+	optional int32 task_type = 1;
+	optional int32 task_schedule = 2;
+	optional int32 task_total = 3;
+	optional int32 has_received = 4;
+	optional int32 task_rewards_type = 5;
+	optional int32 task_rewards_num = 6;
+}
+
+message DealerTaskUpdateReq
+{
+	optional int32 user_id = 1;
+	optional int32 dealer_id = 2;
+	repeated DealerTaskUpdateInfo dealer_task_info = 3;
+}
+
+message DealerTaskUpdateResp
+{
+	optional int32 code = 1;
+	optional int32 user_id = 2;
+	optional int32 dealer_id = 3;
+	repeated DealerTaskUpdateInfo dealer_task_info = 4;
+}
+
+message DealerTaskUpdateInfo
+{
+	optional int32 task_id = 1;
+	optional int32 task_num = 2;
+}
+
+message GetDealerTaskAwardReq
+{
+	optional int32 user_id = 1;
+	optional int32 dealer_id = 2;
+	optional int32 task_id = 3;
+}
+
+message GetDealerTaskAwardResp
+{
+	optional int32 code = 1;
+	optional int32 dealer_id = 2;
+	optional int32 task_id = 3;
+	optional int32 task_award_type = 4;
+	optional int32 task_award_num = 5;
+}
+
+///////////////////////////////////TABLEKING///////////////////////////////////////
+message TableKingChangeDealerReq
+{
+	optional int32 room_id = 1;
+	optional int32 user_id = 2;
+	optional int32 dealer_id = 3;
+	optional int32 skin_id = 4;
+}
+
+message TableKingChangeDealerResp
+{
+	optional int32 code = 1;
+	optional int32 room_id = 2;
+	optional int32 user_id = 3;
+	optional int32 dealer_id = 4;
+	optional int32 skin_id = 5;
+}
+
+/*坐下*/
+message GameLooker2PlayerReq
+{
+	optional int32 userid	= 1;
+	optional string game_version = 2;
+}
+
+message GameLooker2PlayerResp
+{
+	optional int32 code									= 1;
+	optional TablePlayersInfo table_players	= 2;	// 桌子及桌上玩家信息
+	optional int32 custom_flag							= 3;	// 标记custom_data的类型
+	optional BytesData custom_data			= 4;	// 游戏方自定义数据
+}
+
+// 同桌私聊
+message TablePrivateChatReq
+{
+	optional int32 userid	= 1;
+	optional int32 to_userid = 2;
+	optional string msg		= 3;
+}
+message TablePrivateChatNotify
+{
+	optional int32 userid = 1;
+	optional int32 chair = 2;
+	optional string msg	= 3;
+}
+message TablePrivateChatResp
+{
+	optional int32 code = 1;
+}
+
+//请求排行榜
+message UserRankReq
+{
+	optional int32 userid = 1;
+}
+
+//请求排行榜返回
+message UserRankResp
+{
+	optional int32 code =1;
+	repeated UserRank user_rank = 2;
+}
+
+//排行榜
+message UserRank
+{
+	optional int32 userid = 1;
+	optional int32 ranking = 2;
+	optional int64 chips = 3;
+	optional string nick_name = 4;
+	optional string profile_url = 5;
+	optional int32 level = 6;
+}
+
+// 批量获取用户在游戏内的信息
+message QueryUsersGameInfoReq
+{
+  optional int32 gameid      = 1;  
+  repeated int32 userids      = 2;  // 目标用户ID列表
+}
+
+message UserGameInfo
+{
+  optional int32 userid      = 1;
+  optional int32 level      = 2;
+}
+
+message QueryUsersGameInfoResp
+{
+  optional int32 code        = 1;
+  repeated UserGameInfo usersinfo = 2;
+}
+
+
+//======================= 基本数据结构定义 =========================
+message BytesData
+{
+	optional bytes data 			= 1;
+	optional int32 data_len			= 2;
+}
+
+message RoomData
+{
+	optional int32 roomid				= 1;	
+	optional int32 options				= 2;	
+	optional int32 configs				= 3;	
+	optional int32 manages				= 4;		
+	optional int32 max_table_cout		= 5;	
+	optional int32 chaircount_per_table	= 6;	
+	optional int64 min_deposit			= 7;
+	optional int64 max_deposit			= 8;
+	optional int32 min_player_count		= 9;		// 游戏开局的最小玩家数量
+	optional int32 areaid				= 10;		// 区域ID
+}
+
+message User
+{
+	optional int32 userid		= 1;	
+	optional int32 roomid		= 2;	
+	optional int32 tableno		= 3;	
+	optional int32 chairno		= 4;	
+	optional int32 user_type	= 5;	
+	optional int64 deposit		= 6;	
+	optional int32 total_bout	= 7;	
+	optional int32 win_bout		= 8;	
+	optional int32 loss_bout	= 9;	
+	optional int32 offline_count	= 10;
+	
+	optional string head_url	= 11;		// 头像url
+	optional string hardid		= 12;		// 硬件信息
+	optional string nick_name	= 13;		// 昵称
+	optional int32 experience	= 14;		// 经验值
+	optional int32 playerlevel	= 15;		// 等级
+}
+
+message TableUserInfo
+{
+	optional int32 userid			= 1;
+	optional int32 user_type		= 2;	// 用户类型	
+	optional int32 bind_timestamp	= 3;	// 用户上桌的时间	
+}
+
+message ChairInfo
+{
+	optional int32 chairno			= 1;			
+	optional int32 userid			= 2;
+	optional int32 chair_status		= 3;	// 椅子状态
+	optional int32 bind_timestamp	= 4;	// 玩家和椅子绑定的时间戳
+}
+
+message Table
+{
+	optional int32 tableno		= 1;	
+	optional int32 roomid		= 2;	
+	optional int32 chair_count	= 3;	
+	optional int32 banker_chair	= 4;	// 庄家椅子号	
+	optional int64 min_deposit	= 5;	
+	optional int64 max_deposit	= 6;	
+	optional int64 base_deposit	= 7;	// 基础银
+	optional int32 table_status	= 8;
+	repeated ChairInfo chairs	= 9;	// 椅子信息
+	repeated TableUserInfo table_users = 10;
+
+	optional int32 custom_flag	= 11;	
+	optional BytesData custom_data = 12;// 游戏自定义字段
+}
+
+message Room
+{
+	optional RoomData room_data = 1;
+	repeated Table tables		= 2;
+}
+
+message UserResult
+{
+	optional int32 userid		= 1;	
+	optional int32 chairno		= 2;	
+	optional int64 old_deposit	= 3;	// 原有银子数		
+	optional int64 diff_deposit = 4;	// 银子变化值
+	optional int32 fee			= 5;	// 服务费
+	optional int32 experience	= 6;	// 经验值变化
+	optional int32 level		= 7;	// 等级变化
+}
+
+// 桌子及桌上玩家信息
+message TablePlayersInfo
+{
+	optional int32 roomid			= 1;
+	optional int64 room_min_deposit	= 2;
+	optional int64 room_max_deposit	= 3;
+	optional int32 tableno			= 4;
+	optional int32 table_status 	= 5;	// 桌子状态，定义见 TableStatus
+	optional int64 table_min_deposit= 6;
+	optional int64 table_max_deposit= 7;
+	optional int64 base_deposit 	= 8;	// 基础银
+	repeated User players			= 9;	// 桌上玩家的信息
+	repeated ChairInfo chairs		= 10;	// 椅子信息
+}
+
+//======================= 业务数据结构定义 ==========================
+// 心跳
+message PulseReq
+{
+	optional int32 id			= 1;	// 客户端传userid，RobotSvr传clientid
+}
+message PulseResp
+{
+	optional int32 timestamp	= 1;	// 游戏服务启动时间
+}
+
+// 进游戏
+message EnterNormalGameReq
+{
+	optional int32 userid			= 1;
+	optional int32 gameid			= 2;
+	optional int32 roomid			= 3;
+	optional int32 flag 			= 4;	// 定义见EnterGameFlag
+	optional int32 target 			= 5;	// 根据flag不同，target有不同的含义（userid\tableno等）
+	optional string hardid			= 6;	// 硬件信息
+	optional string hall_version	= 7;	// 合集大厅版本
+	optional string game_version	= 8;	// 游戏客户端版本
+}
+
+message EnterNormalGameResp
+{
+	optional int32 code				= 1;
+	optional int32 flag		 		= 2;	// 定义见EnterGameRespFlag
+	optional BytesData hand			= 3;	// 断线续玩的时候返回自己的手牌
+	optional TablePlayersInfo table_players = 4;
+	optional int32 custom_flag		= 5;	// 标记custom_data的类型
+	optional BytesData custom_data	= 6;	// 游戏方自定义数据
+	optional int32 gameid			= 7;	// 当用户在其他游戏中的时候，值为用户所在游戏的gameid
+	optional int64 deposit			= 8;	// 用户自身银子数（当用户在大厅后台Enter成功，在游戏中校验失败的时候返回用户最新银子数）
+	optional int32 roomid			= 9;	// 用户所在房间（大厅后台检测到用户在其他房间）
+}
+
+// 离开游戏
+message LeaveGameReq
+{
+	optional int32 userid	= 1;
+}
+message LeaveGameResp
+{
+	optional int32 code		= 1;
+}
+
+// 旁观转玩家
+message Looker2PlayerReq
+{
+	optional int32 userid	= 1;
+}
+message Looker2PlayerResp
+{
+	optional int32 code		= 1;
+	optional int32 chairno	= 2;
+}
+
+// 玩家转旁观
+message Player2LookerReq
+{
+	optional int32 userid	= 1;
+	optional int32 flag		= 2;
+}
+message Player2LookerResp
+{
+	optional int32 code		= 1;
+}
+
+// 换桌
+message SwitchTableReq
+{
+	optional int32 userid	= 1;
+}
+message SwitchTableResp
+{
+	optional int32 code				= 1;
+	optional TablePlayersInfo table_players	= 2;	// 桌子及桌上玩家信息
+	optional int32 custom_flag		= 3;	// 标记custom_data的类型
+	optional BytesData custom_data	= 4;	// 游戏方自定义数据
+}
+
+// 同桌聊天
+message TableChatReq
+{
+	optional int32 userid	= 1;
+	optional string msg		= 2;
+}
+message TableChatNotify
+{
+	optional int32 userid	= 1;
+	optional string msg		= 2;
+}
+message TableChatResp
+{
+	optional int32 code		= 1;
+}
+
+// 开始游戏(服务内部消息)
+message StartGameReq
+{
+	optional int32 roomid	= 1;
+	optional int32 tableno	= 2;
+}
+
+// 获取桌子及桌上玩家信息
+message GetTablePlayersInfoReq
+{
+	optional int32 userid	= 1;
+}
+message GetTablePlayersInfoResp
+{
+	optional int32 code				= 1;
+	optional TablePlayersInfo table_players	= 2;	// 桌子及桌上用户（自己和所有玩家，目前不包含其他旁观者）信息
+	optional int32 custom_flag		= 3;	// 标记custom_data的类型
+	optional BytesData custom_data	= 4;	// 游戏方自定义数据
+	optional BytesData hand			= 5;	// 断线续玩的时候返回自己的手牌
+}
+
+//==================================== 给客户端的通知 ==========================================//
+// 倒计时开始通知
+message CountdownStartNotify
+{
+	optional int32 tableno		= 1;
+	optional int32 countdown_s	= 2;	// 倒计时秒数	
+}
+
+// 倒计时结束通知
+message CountdownStopNotify
+{
+	optional int32 tableno	= 1;	
+}
+
+// 游戏开始通知
+message GameStartNotify
+{
+	optional int32 tableno	= 1;	
+	optional int32 flag		= 2;			// 标记custom_data的类型
+	optional BytesData custom_data	= 3;	// 游戏方自定义数据
+}
+
+// 玩家弃牌通知
+message PlayerGiveupNotify
+{
+	optional int32 userid		= 1;
+	optional int32 chairno		= 2;	
+	optional int32 next_chair	= 3;
+	optional int32 flag			= 4;		// 标记custom_data的类型
+	optional BytesData custom_data	= 5;	// 游戏方自定义数据
+}
+
+// 游戏结果通知
+message GameResultNotify
+{
+	optional int32 tableno		= 1;	
+	optional int32 bout_count	= 2;		// 第几局
+	optional int32 banker_chair	= 3;		// 庄家椅子号		
+	optional int64 base_deposit = 4;		// 基础银子
+	repeated UserResult user_results = 5;	// 玩家结果
+	optional BytesData custom_data = 6;		// 游戏方自定义数据
+}
+
+// 玩家坐下通知
+message UserSitDownNotify
+{
+	optional User user	= 1;
+	
+	optional int32 flag		= 98;			// 标记custom_data的类型
+	optional BytesData custom_data	= 99;	// 游戏方自定义数据
+}
+
+// 玩家站起通知
+message UserStandUpNotify
+{
+	optional int32 userid	= 1;
+	optional int32 chairno	= 2;
+		
+	optional int32 flag		= 98;			// 标记custom_data的类型
+	optional BytesData custom_data	= 99;	// 游戏方自定义数据
+}
+
+// 玩家离开游戏通知
+message UserLeaveNotify
+{
+	optional int32 userid	= 1;
+	optional int32 chairno	= 2;
+	//玩家离开的原因，参照枚举LeaveTableFlag
+	optional int32 flag = 3;
+}
+
+// 旁观者进入通知
+message LookerEnterNotify
+{
+	optional User user	= 1;
+}
+
+// 玩家银子变化通知
+message UserDepositChangeNotify
+{
+	optional int32 userid		= 1;
+	optional int64 diff_deposit	= 2;	// 银子变化值
+	optional int64 own_deposit	= 3;	// 银子余额
+}
+
+// 游戏结算失败通知
+message RefreshResultFaildNotify
+{
+	optional int32 roomid	= 1;
+	optional int32 tableno	= 2;
+}
+//==================================== 商城 ==========================================//
+// 商品信息
+message MallProduct
+{
+    optional int32 productid		= 1; // 商品ID
+	optional int32 currency			= 2; // 货币种类
+	optional int64 price			= 3; // 价格
+	optional string product_name	= 4; // 商品名称
+	optional string product_code	= 5; // 商品代号
+	optional int32 os_support		= 6; // 支持的操作系统
+}
+
+// 获取商品列表
+message GetMallProductsReq
+{
+    optional int32 userid			= 1; // 用户ID
+	optional int32 os				= 2; // 操作系统
+}
+message GetMallProductsResp
+{
+	optional int32 code				= 1; 
+    repeated MallProduct product	= 2; // 商品列表
+}
+
+// 商城购买道具
+message MallShopingReq
+{
+	optional int32 userid		= 1;
+	optional int32 productid	= 2;	// 商品ID
+	optional int32 count		= 3;	// 购买数量
+}
+message MallShopingResp
+{
+	optional int32 code			= 1;
+	optional int32 currency		= 2;	// 货币类型
+	optional int32 cost			= 3;	// 花费金额
+}
+
+//==================================== 机器人消息 ==========================================//
+message RobotSvrValidateReq
+{
+	optional int32 client_id	= 1;	// 机器人服务ID
+}
+
+message RobotSvrValidateResp
+{
+	optional int32 code			= 1;	
+}
+
+message GetGameUsersReq
+{
+	optional int32 clientid		= 1;	// 机器人服务ID
+	optional int32 roomid		= 2;	// 房间id  0表示获取所有房间的信息
+}
+
+message GetGameUsersResp
+{
+	optional int32 code			= 1;	
+	repeated Room rooms			= 2;	// 房间信息
+	repeated User users			= 3;	// 玩家信息
+}
+
+// GN_RS_PLAER_ENTERGAME/GN_RS_LOOKER_ENTERGAME
+message RS_UserEnterGameNotify
+{
+	optional User user			= 1;
+	optional RoomData room_data = 2;	
+	optional int64 min_deposit	= 3;	// 当前桌 最小银子数
+	optional int64 max_deposit	= 4;	// 当前桌 最大银子数
+	optional int64 base_deposit	= 5;	// 当前桌 基础银
+}
+
+// GN_RS_LOOER2PLAYER/GN_RS_PLAYER2LOOKER
+message RS_SwitchLookerPlayerNotify
+{
+	optional int32 userid		= 1;
+	optional int32 roomid		= 2;
+	optional int32 tableno		= 3;
+	optional int32 chairno		= 4;
+}
+
+// GN_RS_GAME_START
+message RS_StartGameNotify
+{
+	optional int32 roomid		= 1;
+	optional int32 tableno		= 2;
+	repeated ChairInfo chairs	= 3;	// 只是为了通知参与游戏的椅子，机器人服务不应该直接使用椅子状态
+}
+
+// GN_RS_USER_REFRESH_RESULT
+message RS_UserRefreshResultNotify
+{
+	optional int32 userid		= 1;
+	optional int32 roomid		= 2;
+	optional int32 tableno		= 3;
+	optional int32 chairno		= 4;
+}
+
+// GN_RS_REFRESH_RESULT
+message RS_RefreshResultNotify
+{
+	optional int32 roomid		= 1;
+	optional int32 tableno		= 2;
+}
+
+// GN_RS_USER_LEAVEGAME
+message RS_UserLeaveGameNotify
+{
+	optional User user			= 1;
+}
+
+// GN_RS_SWITCH_TABLE
+message RS_SwitchTableNotify
+{
+	optional int32 userid		= 1;
+	optional int32 roomid		= 2;
+	optional int32 old_tableno	= 3;
+	optional int32 new_tableno	= 4;
+	optional int32 new_chairno	= 5;
+}
+
+// GN_RS_NEW_ROOM
+message RS_NewRoomNotify
+{
+	optional Room room			= 1;
+}

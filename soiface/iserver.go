@@ -1,4 +1,4 @@
-package so_iface
+package soiface
 
 type IServer interface {
 	Start()
