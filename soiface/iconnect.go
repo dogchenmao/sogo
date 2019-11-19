@@ -4,10 +4,11 @@ import "net"
 
 type IConnect interface {
 	Start()
-	Stop()
-	GetConnection() *net.TCPConn
-	GetConnID() uint32
-	RemoteAddr() net.Addr
+	SendNotify()
+	SendRequest()
+	SendPulse()
+	Close()
+	HandlerMessage()
 }
 
 type HandFunc func(*net.TCPConn, []byte, int) error
