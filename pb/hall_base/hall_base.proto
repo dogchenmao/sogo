@@ -1,0 +1,366 @@
+syntax = "proto2";
+package hall.base;
+
+// ====================== 基础数据结构 ====================== //
+message GameSvrInfo
+{
+	optional int32 hostid							= 1;	// 所在服务器ID
+	optional int32 listen_port						= 2;	// 服务监听端口
+	optional int32 gameid							= 3;	// 游戏ID
+}
+
+message GameUserPulse
+{
+	optional int32 userid							= 1;
+	optional int32 roomid							= 2;
+}
+
+message AdditinalData
+{
+	optional int32 original_req		= 1;
+	optional bytes data 			= 2;
+	optional int32 data_len			= 3;
+}
+// =========================================================== //
+
+// 客户端认证消息HR_CLIENT_VALID
+message ValidClentReq
+{
+	optional int32 client_type		= 1;
+	optional int32 gameid 			= 2;	// 归属游戏id，比如说teenGameSvr和tp的ChunkSvr都填1002
+	optional int32 listen_port		= 3;	// 服务监听的端口
+	optional int32 hostid			= 4;	// 所在服务器的服务器ID
+}
+message ValidClentResp
+{
+	optional int32 code				= 1;	// 0表示成功
+}
+
+// 服务间心跳
+message SvrPulse
+{
+	optional int64 tick_count 		= 1;
+}
+
+
+// 游戏服务心跳
+message GamePulse
+{
+	optional int32 gameid			= 1;
+	optional int64 tick_count 		= 2;
+}
+
+
+message EnterGameReqV2
+{
+	optional int32 userid							= 1;
+	optional int32 gameid							= 2;
+	optional int32 roomid							= 3;
+	optional string hardid							= 4;
+	optional AdditinalData additinal_data			= 5;	// 进游戏附加数据，在返回结果的时候带回给gamesvr
+	optional int32 deposit_type						= 6;	// 货币类型
+}
+
+message EnterClubGameReqV2
+{
+	optional int32 userid							= 1;
+	optional int32 gameid							= 2;
+	optional string hardid							= 4;
+	optional AdditinalData additinal_data			= 5;	// 进游戏附加数据，在返回结果的时候带回给gamesvr
+}
+
+
+// 进游戏成功通知
+message EnterGameOkNotify
+{
+	optional int32 userid							= 1;
+	optional int32 gameid							= 2;
+	optional int32 roomid							= 3;
+	optional int64 tableno							= 4;
+	optional int32 chairno							= 5;
+	optional int32 areaid							= 6;	// 游戏内不关心此字段
+}
+
+// 进游戏成功通知
+message LeaveGameNotify
+{
+	optional int32 userid							= 1;
+	optional int32 gameid							= 2;
+	optional int32 roomid							= 3;
+	optional int64 tableno							= 4;
+	optional int32 chairno							= 5;
+}
+
+// 游戏服务内玩家心跳
+message GameUsersPulse
+{
+	optional GameSvrInfo game_svr					= 1;	// 游戏服务信息
+	repeated GameUserPulse users_pulse				= 2;	// 玩家心跳信息
+}
+
+// 游戏服务内玩家数量
+message RoomUserCount
+{
+	optional int32 roomid					= 1;
+	optional int32 areaid					= 2;
+	optional int32 usercount				= 3;
+}
+
+message GameUserCount
+{
+	optional int32 gameid					= 1;
+	repeated RoomUserCount room_usercount	= 2;
+}
+
+// 游戏开始通知
+message StartGameNotify
+{
+	optional int32 gameid							= 1;
+	optional int32 roomid							= 2;
+	optional int64 tableno							= 3;
+	repeated int32 userid							= 4;
+}
+
+// 结算
+message UserGameResult
+{
+	optional int32 userid							= 1;
+	optional int32 chairno							= 2;
+	optional int64 base_deposit						= 3;	// 基础银
+	optional int64 old_deposit						= 4;	// 原来的银子数
+	optional int64 diff_deposit						= 5;	// 银子变化值
+	optional int64 cut								= 6;	// 逃跑扣银（确认海外有没有）
+	optional int64 fee								= 7;	// 手续费（确认海外有没有）
+	optional int64 extra							= 8;	// 额外银子（确认海外有没有）
+	optional int32 timecost							= 9;	// 游戏耗时（秒）
+	optional int32 bout_count						= 10;	// 本次结算 总局数
+	optional int32 win_count						= 11;	// 本次结算 赢的局数
+	optional int32 loss_count						= 12;	// 本次结算 输的局数
+	optional int32 standoff_count					= 13;	// 本次结算 和的局数
+	optional int32 offline_count					= 14;	// 掉线次数
+	optional int32 experience						= 15;	// 经验值变化
+	optional int32 playerlevel						= 16;	// 等级
+}
+
+message RefreshGameResult
+{
+	optional int32 roomid							= 1;
+	optional int64 tableno							= 2;
+	optional int32 flag								= 3;	// 结算flag
+	repeated UserGameResult user_result				= 4;
+	optional int32 gameid							= 5;	// 游戏ID
+}
+
+// 房间断线通知
+message RoomOfflineNotify
+{
+	optional int32 hostid							= 1;	// 房间所在服务的服务器ID
+	optional int32 port								= 2;	// 房间所在服务的监听端口
+	repeated int32 roomid							= 3;	// 断线的房间ID列表
+}
+
+//========HTTP通用结构==========//
+message HttpHead{
+	optional string field			= 1;	// 字段
+	optional string value			= 2;	// 值
+}
+
+message HttpReq{
+	optional int32 sendtype			= 1;	// 发送方式  1=get，2=post
+	repeated HttpHead heads			= 2;	// 请求包头
+	optional string body			= 3;	// 请求包体数据
+	optional string url				= 4;	//
+}
+
+message HttpResp{
+	optional int32 code				= 1;	// 错误码
+	optional string data			= 2;	// 应答包体
+}
+
+// 事件上报通知
+message EventReportNotify
+{
+	optional string url				= 1;
+	optional string body			= 2;
+	optional int32 sendtype			= 3;	// 发送方式  1=get，2=post
+}
+
+//========来自HallSvr的请求=======//
+// 通过硬件信息登录注册
+message LogonRegisterReq
+{
+	optional int32 channelid		= 1;	// 渠道ID
+	optional int32 appid			= 2;	//
+	optional string encrypt_deviceid= 3;	// 加密的设备ID
+	optional string hardid			= 4;	// 硬件信息（有些地方也叫wifiid）
+	optional string encrypt_hardid	= 5;	// 加密的hardid
+	optional string systemid		= 6;	// 硬件信息（有些地方也叫volumid）
+	optional string encrypt_systemid= 7;	// 加密的systemid
+	optional string imei			= 8;	// 硬件信息（有些地方也叫machineid）
+	optional string encrypt_imei	= 9;	// 加密的imei
+	optional string encrypt_imsi	= 10;
+	optional string encrypt_sim_serial= 11;
+	optional string verify_code		= 12;
+	optional int32 download_group	= 13;
+	optional int32 os_name			= 14;
+	optional string client_ip		= 15;	// 客户端不需要关心此字段，大厅代理负责填充
+	optional int32 gameid			= 16;
+	optional int32 hall_group		= 17;	// 大厅组ID，有些地方也叫groupid（逐步废弃此字段）
+	optional string deviceid		= 18;	// 设备ID
+	optional string head_url		= 19;	// 新用户注册时指定用户头像
+
+	optional string brand			= 51;	// 手机品牌
+	optional string model_no		= 52;	// 手机型号
+	optional string sys_langue		= 53;	// 系统语言
+	optional string app_langue		= 54;	// app设置的语言
+	optional int32 net_type			= 57;	// 网络类型（2G/3G/4G/5G 分别对应2.3.4.5，wifi：128，未知：256）
+	optional string mobile_carriers	= 58;	// 移动运营商
+	optional int32 os				= 59;	// 操作系统（安卓：6，ios：8）
+	optional string os_ver			= 60;	// 操作系统版本
+	optional int32 maingame_id		= 61;	// 主游戏ID
+	optional string hall_ver		= 62;	// 合集大厅版本号
+	optional int32 resolution_x		= 63;	// 分辨率
+	optional int32 resolution_y		= 64;	// 分辨率
+	optional string maingame_ver	= 65;	// 主游戏版本号
+
+	optional string utm				= 81;	// utm信息
+	optional string recommenderid	= 82;	// 推广员ID
+}
+
+message LogonRegisterResp
+{
+	optional int32 code				= 1;	//
+	optional int32 third_part_code	= 2;	// 第三方接口返回的错误码
+	optional int32 userid			= 3;	//
+	optional int32 user_type		= 4;	// 用户类型
+	optional string nick_name		= 5;	// 昵称
+	optional string head_url		= 6;	// 头像url
+	optional string	acess_token		= 7;	// access_token
+	optional string login_token		= 8;	// 登录token
+	optional string uniqueid		= 9;	// 唯一ID，在登录的时候由大厅后台生成
+	optional int32 new_user_flag	= 10;	// 新用户flag：1表示新用户
+	optional int64 deposit			= 11;	// 用户银子数
+}
+
+// 登录
+message LogonReq
+{
+	optional int32 userid			= 1;
+	optional string password		= 2;	// 登录密码 或 token
+	optional string hardid			= 3;	// 硬件信息（有些地方也叫wifiid）
+	optional string systemid		= 4;	// 硬件信息（有些地方也叫volumid）
+	optional string imei			= 5;	// 硬件信息（有些地方也叫machineid）
+	optional string deviceid		= 6;	// 设备ID（目前是androidid）
+	optional int32 gameid			= 7;	// 合集大厅的gameid==1000
+	optional int32 channelid		= 8;	// 合集大厅渠道ID
+	optional int32 groupid			= 9;	// 大厅组ID
+	optional int32 hallsvrid		= 10;	// 大厅服务ID，客户端不需要关心此字段
+	optional int32 flag				= 11;	// 登录标识
+	optional string client_ip		= 12;	// 用户IP，客户端不需要关心此字段
+	optional int32 logon_interval	= 13;	// 登录心跳间隔，客户端不需要关心此字段
+	optional int32 tokenid			= 14;	// 用户登录大厅时的token，客户端不需要关心此字段
+	optional int32 blocksvrid		= 15;	// block服务ID，客户端不需要关心此字段
+
+
+	optional string brand			= 51;	// 手机品牌
+	optional string model_no		= 52;	// 手机型号
+	optional string sys_langue		= 53;	// 系统语言
+	optional string app_langue		= 54;	// app设置的语言
+	optional int32 net_type			= 57;	// 网络类型（2G/3G/4G/5G 分别对应2.3.4.5，wifi：128，未知：256）
+	optional string mobile_carriers	= 58;	// 移动运营商
+	optional int32 os				= 59;	// 操作系统（安卓：6，ios：8）
+	optional string os_ver			= 60;	// 操作系统版本
+	optional int32 maingame_id		= 61;	// 主游戏ID（游戏内断线重连不需要赋值此字段）
+	optional string hall_ver		= 62;	// 合集大厅版本号
+	optional int32 resolution_x		= 63;	// 分辨率
+	optional int32 resolution_y		= 64;	// 分辨率
+	optional int32 logon_type		= 65;	// 登录方式（枚举值见http://doc.uc108.org:8002/web/#/439?page_id=6318中LogonType）
+
+	// 在合集大厅中触发的登陆，上报maingame_ver； 在游戏中触发的登陆，上报currentgame_ver
+	optional string maingame_ver	= 66;	// 主游戏版本号
+	optional string currentgame_ver	= 67;	// 当前游戏版本号
+	optional int32 game_channelid	= 68;	// 游戏渠道ID，只有在游戏内断线重连的时候才需要上报此字段
+}
+
+message LogonResp
+{
+	optional int32 code				= 1;
+	optional int32 userid			= 2;
+	optional int32 user_type		= 3;	// 用户类型
+	optional string nick_name		= 4;	// 昵称
+	optional string head_url		= 5;	// 头像url
+	optional string	acess_token		= 6;	// token
+	optional string uniqueid		= 7;	// 唯一ID，在登录的时候由大厅后台生成
+	optional int32 sex				= 8;	// 性别
+	optional int64 deposit			= 9;	// 用户银子数
+	optional int32 groupid			= 10;	// 大厅组ID
+	optional int32 flag				= 11;	// 登录标识
+	optional string hardid			= 12;	// 硬件信息
+	optional int64 timestamp		= 13;	// 登录时间戳，应zhumj要求添加，后台做签名时使用
+	optional string handphone		= 14;	// 绑定手机号
+}
+
+// 登录成功通知
+message LogonOkNotify
+{
+	optional LogonReq logon_req		= 1;	// 登录请求
+	optional LogonResp logon_resp	= 2;	// 登录应答
+}
+
+
+// 获取玩家游戏内信息
+message QueryUserGameInfoReq
+{
+	optional int32 target_userid	= 1;	// 目标用户ID
+	optional int32 my_userid		= 2;	// 发起查询的用户id
+	optional int32 gameid			= 3;	// 游戏ID
+}
+
+message QueryUserGameInfoResp
+{
+	optional int32 code				= 1;
+	optional int32 total_bout		= 2;	// 总局数
+	optional int32 win_bout			= 3;	// 赢的局数
+	optional int32 loss_bout		= 4;	// 输的局数
+	optional int32 standoff_bout	= 5;	// 和的局数
+	optional int32 experience		= 6;	// 经验值
+	optional int32 score			= 7;	// 积分
+	optional int32 time_cost		= 8;	// 游戏时长
+	optional int32 playerlevel		= 9;	// 玩家等级
+}
+
+// 批量获取用户在游戏内的信息
+message QueryUsersGameInfoReq
+{
+	optional int32 gameid			= 1;
+	repeated int32 userids			= 2;	// 目标用户ID列表
+}
+
+message UserGameInfo
+{
+	optional int32 userid			= 1;
+	optional int32 level			= 2;
+}
+
+message QueryUsersGameInfoResp
+{
+	optional int32 code				= 1;
+	repeated UserGameInfo usersinfo = 2;
+}
+
+// 检查是否可用
+message CheckPlaceValidReq
+{
+	optional int32 userid			= 1;
+	optional int32 channelid		= 2;
+	optional string lat				= 3;
+	optional string lon				= 4;
+}
+
+message CheckPlaceValidResp
+{
+	optional int32 code				= 1;
+}
+
+
+

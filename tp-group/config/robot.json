@@ -1,0 +1,27 @@
+{
+    "game_id":1002,
+
+    "main_interval":1000,
+
+    "deposit_interval":1000,
+
+    "deposit_active_id" :"10",
+
+    "deposit_gain_url":"http://activityapi.comfun.org:1505/Robot/ChipsOperate",
+
+    "deposit_back_url":"http://activityapi.comfun.org:1505/Robot/ChipsOperate",
+	
+	"dingding_url":"https://oapi.dingtalk.com/robot/send?access_token=031c0d531e3af07d78eed690a7e8361d481497f6de6390bdb95444d19dea8e23",
+
+    "deposit_gain_amount":100000,
+
+    "deposit_back_amount":100000,
+    
+    "rooms":[
+        {"roomid":7866, "wait_time":1, "count_per_table":4}
+    ],
+    
+    "robots":[
+        {"useridstart":708243,"useridend":708743,"password":"1q2w3e","roomid":7866}
+    ]
+}

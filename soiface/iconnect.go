@@ -5,10 +5,9 @@ import "net"
 type IConnect interface {
 	Start()
 	SendNotify()
-	SendRequest()
+	SendRequest(MsgType, RequestID, Echo uint32, data []byte)
 	SendPulse()
 	Close()
-	HandlerMessage()
 }
 
 type HandFunc func(*net.TCPConn, []byte, int) error

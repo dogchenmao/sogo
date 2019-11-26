@@ -6,13 +6,13 @@ import (
 
 type Request struct {
 	connect soiface.IConnect
-	data    []byte
+	msg     soiface.IMessage
 }
 
-func (req *Request) GetConnection() soiface.IConnect {
+func (req *Request) GetConn() soiface.IConnect {
 	return req.connect
 }
 
-func (req *Request) GetData() []byte {
-	return req.data
+func (req *Request) GetMsg() soiface.IMessage {
+	return req.msg
 }

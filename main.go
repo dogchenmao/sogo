@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dogchenmao/sogo/sonet"
+	"github.com/dogchenmao/sogo/tp-group/robot"
 )
 
 func main() {
 	fmt.Println("Test Start...")
 
-	client := sonet.NewConnect("127.0.0.1", 42002)
-
-	go client.Start()
+	robot := robot.NewRobotMgr()
+	robot.Init()
 
 	for {
 		time.Sleep(10 * time.Second)
